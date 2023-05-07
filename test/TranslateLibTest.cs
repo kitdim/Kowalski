@@ -1,16 +1,27 @@
 using TranslateLiblary;
+using System.Reflection;
 
 namespace test;
 
 public class TranslateLibTest
 {
-    private Dictionary<string, string> _dict = new Dictionary<string, string>();
     [Fact]
     public void AddWordsTest()
     {
         // arrange
+        Dictionary<string, string> arrange = new();
+        arrange.Add("brother", "брат");
+
         // act
+        Translate translate = new();
+        Type myType = typeof(Translate);
+
+        translate.AddWords("brother", "брат");
+        var dict = myType.GetField("_dict", BindingFlags.Instance | BindingFlags.NonPublic);
+        var actual = dict?.GetValue(translate);
+
         // assert
+        Assert.Equal(arrange, actual);
     }
     [Fact]
     public void CheckWordTest()
