@@ -4,7 +4,6 @@ public class Translate
     /// <summary>
     /// Словарь английских слов с переводом на русский
     /// </summary>
-
     private WordStorage _storage = new();
     private Dictionary<string, string>? _dict;
 
