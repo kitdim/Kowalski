@@ -3,6 +3,7 @@ using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 internal class Program
 {
@@ -27,33 +28,54 @@ internal class Program
 
         var me = await botClient.GetMeAsync();
 
-        Console.WriteLine($"Start listening for @{me.Username}");
+        Console.WriteLine($"Начал прослушку бота @{me.Username}");
         Console.ReadLine();
 
         // Send cancellation request to stop bot
         cts.Cancel();
     }
-    async static Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+    private async static Task HandleUpdateAsync(ITelegramBotClient botClient, Update update,
+    CancellationToken cancellationToken)
     {
-        // Only process Message updates: https://core.telegram.org/bots/api#message
-        if (update.Message is not { } message)
+        if (update.Type == UpdateType.Message && update?.Message?.Text != null)
+        {
+            await HandleMessage(botClient, update.Message);
             return;
-        // Only process text messages
-        if (message.Text is not { } messageText)
-            return;
-
-        var chatId = message.Chat.Id;
-
-        Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
-
-        // Echo received message text
-        Message sentMessage = await botClient.SendTextMessageAsync(
-            chatId: chatId,
-            text: "You said:\n" + messageText,
-            cancellationToken: cancellationToken);
+        }
     }
 
-    static Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+    private async static Task HandleMessage(ITelegramBotClient botClient, Message message)
+    {
+        var nameUser = message.Chat.Username;
+        ReplyKeyboardMarkup keyboard = new(new[]
+        {
+            new KeyboardButton[] {"Проверить", "Добавить слово"},
+        })
+        {
+            ResizeKeyboard = true
+        };
+
+        if (message.Text == "/start")
+        {
+            await botClient.SendTextMessageAsync(message.Chat.Id, $"Привет {nameUser}", replyMarkup: keyboard);
+            return;
+        }
+        if (message.Text == "Проверить")
+        {
+            await botClient.SendTextMessageAsync(message.Chat.Id, $"Проверка перевода не готова", replyMarkup: keyboard);
+            return;
+        }
+        if (message.Text == "Добавить слово")
+        {
+            await botClient.SendTextMessageAsync(message.Chat.Id, $"Добавление слов не готово", replyMarkup: keyboard);
+            return;
+        }
+
+    }
+
+
+    static Task HandlePollingErrorAsync(ITelegramBotClient botClient,
+    Exception exception, CancellationToken cancellationToken)
     {
         var ErrorMessage = exception switch
         {
