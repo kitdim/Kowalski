@@ -401,3 +401,4 @@ FodyWeavers.xsd
 /consoleApp/consoleApp.csproj
 /botApp/botApp.csproj
 /Kowalski.sln
+/BotApp/secrets.json
