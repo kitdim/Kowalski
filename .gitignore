@@ -396,3 +396,9 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/test/test.csproj
+/LibraryTranslate/LibraryTranslate.csproj
+/consoleApp/consoleApp.csproj
+/botApp/botApp.csproj
+/Kowalski.sln
+/BotApp/secrets.json

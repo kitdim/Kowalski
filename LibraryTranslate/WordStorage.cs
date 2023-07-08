@@ -1,6 +1,6 @@
-using static System.Console;
-namespace TranslateLiblary;
+﻿using static System.Console;
 
+namespace TranslateLiblary;
 public class WordStorage
 {
     private const string _path = "wordstorage.txt";
